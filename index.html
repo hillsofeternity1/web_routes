@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Miku Godies</title>
+    <style>
+        table.minimalistBlack {
+            border: 3px solid #000000;
+            width: 100%;
+            text-align: left;
+            border-collapse: collapse;
+        }
+
+        table.minimalistBlack td,
+        table.minimalistBlack th {
+            border: 1px solid #000000;
+            padding: 5px 4px;
+        }
+
+        table.minimalistBlack tbody td {
+            font-size: 13px;
+        }
+
+        table.minimalistBlack thead {
+            background: #CFCFCF;
+            background: -moz-linear-gradient(top, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
+            background: -webkit-linear-gradient(top, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
+            background: linear-gradient(to bottom, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
+            border-bottom: 3px solid #000000;
+        }
+
+        table.minimalistBlack thead th {
+            font-size: 15px;
+            font-weight: bold;
+            color: #000000;
+            text-align: left;
+        }
+
+        table.minimalistBlack tfoot {
+            font-size: 14px;
+            font-weight: bold;
+            color: #000000;
+            border-top: 3px solid #000000;
+        }
+
+        table.minimalistBlack tfoot td {
+            font-size: 14px;
+        }
+
+        code {
+            background-color: black;
+            color: white;
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    {{ message }}
+    <table class="minimalistBlack">
+        <tbody>
+            <tr>
+                <td valign="top">
+                    <h2>Current routing tables:</h2>
+                    <code>ip route show table %num</code>
+                    <div style="overflow-y: scroll; height:120px;">
+                        <pre>{% for key, value  in rules.items() %}
+{{ key }} - {{ value[0] }}
+{% endfor %}</pre>
+                    </div>
+                    <hr>
+                    <h3>Add new or delete table</h3>
+                    <code>sudo ip rule add/del from %gw table %num</code>
+                    <form action="/" method="POST">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>Gateway</td>
+                                    <td>Table uniq number</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" name='gateway'></td>
+                                    <td><input type="number" name='number' value="100" min="1" max="32766"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <input style="display:inline" type="submit" name="action" value="Add">
+                        <input style="display:inline" type="submit" name="action" value="Remove">
+                    </form>
+                </td>
+                <td valign="top">
+                    <h2>Current routing table <i>default</i>:</h2>
+                    <code>ip route</code>
+                    <div style="overflow-y: scroll; height:450px;">
+                        <pre>
+{% for rule in routes_default %}
+{{ rule }}
+{% endfor %}</pre>
+                    </div>
+                </td>
+                <td valign="top">
+                    <h2>Current interfaces:</h2>
+                    <code>ip a</code>
+                    <div style="overflow-y: scroll; height:450px;">
+                        <pre>
+{% for line in ip_a %}
+{{ line }}
+{% endfor %}
+</pre>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                {% for key, value in rules.items() %}
+                <td  valign="top">
+                    <h2>Table {{ key }}</h2>
+                    <div style="overflow-y: scroll; height:150px;">
+                    <i>Routes:</i>
+                    <pre>{% for line in value %}
+{{ line }}
+{% endfor %}</pre>
+                    <i>Rules:</i>
+                    <pre>
+{% for ikey, ivalue  in rules_custome.items() %}
+{% if ikey == key %}
+{% for line in ivalue %}
+{{ line }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+</pre>
+                    </div>
+                </td>
+                {% if loop.index %3 == 0%}</tr>
+            <tr>{%else%}{%endif%} {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+
+</html>
